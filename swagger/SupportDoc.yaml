@@ -1,0 +1,182 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: Scoir API
+  description: Scoir college integration API
+schemes:
+- https
+host: saxnot.scoir.rocks
+basePath: "/api"
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  "/highschools/{highSchoolId}":
+    get:
+      operationId: getHighSchool
+      summary: Get a given High School
+      description: Returns a High School for the given High School Id
+      parameters:
+      - name: highSchoolId
+        description: The High School to return
+        in: path
+        required: true
+        type: string
+      responses:
+        '200':
+          description: A High School
+          schema:
+            "$ref": "#/definitions/HighSchool"
+          examples:
+            application/json: |-
+              {
+                "Id": "5515a1e18fde3c91770b744a",
+                "SchoolDistrict": "BEEBE SCHOOL DISTRICT",
+                "SchoolName": "BADGER ACADEMY",
+                "SchoolCounty": "WHITE COUNTY",
+                "Address": "1201 W CENTER ST",
+                "Phone": "5018828413",
+                "City": "BEEBE",
+                "State": "AR",
+                "Zip": "72012",
+                "CurrentSeniorYear": 2017,
+                "SystemState": "approved_state",
+                "SupportsDocuments": false,
+                "SupportsCodeInvite": false
+              }
+  "/my/batches":
+    get:
+      operationId: getBatches
+      summary: Gets batch summaries
+      description: Returns a list containing all batches. The list supports paging.
+      parameters:
+      - name: pageSize
+        in: query
+        description: Number of batches returned
+        type: integer
+        required: false
+        default: 20
+      - name: from
+        in: query
+        description: Number of batches to skip
+        type: integer
+        required: false
+        default: 0
+      responses:
+        '200':
+          description: A BatchSummery object
+          schema:
+            "$ref": "#/definitions/BatchSummary"
+  "/my/batches/{id}":
+    get:
+      operationId: getBatchById
+      summary: Gets a batch
+      description: Returns a single batch by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: The batch id
+        type: string
+      responses:
+        '200':
+          description: A Batch
+          schema:
+            "$ref": "#/definitions/Batch"
+        '404':
+          "$ref": "#/responses/404"
+definitions:
+  HighSchool:
+    title: High School
+    description: Representation of a High School
+    properties:
+      Id:
+        type: string
+      SchoolDistrict:
+        type: string
+      SchoolName:
+        type: string
+      SchoolCounty:
+        type: string
+      Address:
+        type: string
+      Phone:
+        type: string
+      City:
+        type: string
+      State:
+        type: string
+      Zip:
+        type: string
+      CurrentSeniorYear:
+        type: number
+      SystemState:
+        type: string
+      SupportsDocuments:
+        type: boolean
+      SupportsCodeInvite:
+        type: boolean
+  Document:
+    title: Document
+    description: |-
+      Represents a single docuemnt sent to a college on behalf of a high school
+      in a batch
+    properties:
+      Id:
+        type: string
+      DocumentId:
+        type: string
+      SentVersionId:
+        type: string
+  Batch:
+    allOf:
+    - properties:
+        Documents:
+          type: array
+          items:
+            "$ref": "#/definitions/Document"
+    - "$ref": "#/definitions/BatchInfo"
+  BatchInfo:
+    properties:
+      Id:
+        type: string
+      SchoolName:
+        type: string
+      SentDate:
+        type: string
+        format: date
+      DeliveredDate:
+        type: string
+        format: date
+      NumStudents:
+        type: number
+      NumDocuments:
+        type: number
+      StaffFirstName:
+        type: string
+      StaffLastName:
+        type: string
+      FileName:
+        type: string
+      Size:
+        type: number
+  BatchSummary:
+    properties:
+      Total:
+        type: number
+      Results:
+        type: array
+        items:
+          "$ref": "#/definitions/BatchInfo"
+  Error:
+    properties:
+      Code:
+        type: number
+      Message:
+        type: string
+responses:
+  '404':
+    description: Item not found.
+    schema:
+      "$ref": "#/definitions/Error"
