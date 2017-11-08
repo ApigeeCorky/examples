@@ -1,0 +1,233 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is a sample server for DaveG's Apigee POC",
+    "version" : "1.0.0",
+    "title" : "DaveG Apigee POC",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "apiteam@swagger.io"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "davegapigatewaytest-test.us-west-2.elasticbeanstalk.com",
+  "basePath" : "/api",
+  "tags" : [ {
+    "name" : "user",
+    "description" : "Operations about users",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "http://swagger.io"
+    }
+  }, {
+    "name" : "session",
+    "description" : "Access to games"
+  }, {
+    "name" : "game",
+    "description" : "Operations about games",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "http://swagger.io"
+    }
+  } ],
+  "schemes" : [ "http" ],
+  "paths" : {
+    "/user" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Create a new user",
+        "description" : "",
+        "operationId" : "addUser",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          }
+        },
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    }
+    "/session" : {
+      "post" : {
+        "tags" : [ "session" ],
+        "summary" : "Create a new session",
+        "description" : "",
+        "operationId" : "addSession",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Session"
+            }
+          }
+        },
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    }
+    "/game/{sessionId}" : {
+      "post" : {
+        "tags" : [ "game" ],
+        "summary" : "Create game",
+        "description" : "Creates a single game",
+        "operationId" : "createGame",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "sessionId",
+          "in" : "path",
+          "description" : "ID of session for new game",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Game"
+            }
+          }
+          "400" : {
+            "description" : "Invalid ID supplied"
+          }
+        },
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/game/{sessionId}/{gameId}" : {
+      "get" : {
+        "tags" : [ "game" ],
+        "summary" : "Fetch game",
+        "description" : "Display a single game",
+        "operationId" : "getGame",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "sessionId",
+          "in" : "path",
+          "description" : "ID of session for existing game",
+          "required" : true,
+          "type" : "string"
+        },
+        {
+          "name" : "gameId",
+          "in" : "path",
+          "description" : "ID of game for existing game",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/Game"
+            }
+          },
+          "400" : {
+            "description" : "Invalid ID supplied"
+          }
+        },
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    }
+  },
+  "definitions" : {
+    "Game" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "session" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/User"
+          }
+        },
+        "rules" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "startTime" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "endTime" : {
+          "type" : "string",
+          "format" : "date-time"
+        },
+        "states" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "moves" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "Session" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "owner" : {
+          "$ref" : "#/definitions/User"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/User"
+          }
+        },
+        "games" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/Game"
+          }
+        }
+      }
+    },
+    "User" : {
+      "type" : "object",
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}
